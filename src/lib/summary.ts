@@ -18,7 +18,7 @@ async function extractPdfText(url: string): Promise<string> {
       const text = content.items.map((item: any) => item.str).join(' ')
       parts.push(text)
     }
-    return parts.join('\n\n').slice(0, 20000)
+    return parts.join('\n\n')
   } catch {
     return ''
   }
@@ -28,7 +28,7 @@ async function extractPdfText(url: string): Promise<string> {
 async function extractTxtText(url: string): Promise<string> {
   try {
     const res = await fetch(url)
-    return (await res.text()).slice(0, 20000)
+    return await res.text()
   } catch {
     return ''
   }
@@ -40,7 +40,7 @@ async function extractFb2Text(url: string): Promise<string> {
     const res = await fetch(url)
     const xml = await res.text()
     const body = xml.match(/<body>[\s\S]*?<\/body>/i)?.[0] || xml
-    return body.replace(/<[^>]+>/g, '').trim().slice(0, 20000)
+    return body.replace(/<[^>]+>/g, '').trim()
   } catch {
     return ''
   }
@@ -87,7 +87,7 @@ export async function generateSummary(book: Book, mode: SummaryMode = 'short'): 
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
       ],
-      max_tokens: mode === 'short' ? 1000 : 2000,
+      max_tokens: mode === 'short' ? 2000 : 4000,
       temperature: 0.3, // низкая температура — меньше выдумок
     }),
   })
