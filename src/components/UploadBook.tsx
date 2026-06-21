@@ -18,14 +18,16 @@ export default function UploadBook() {
     setUploading(true)
     setMessage('')
 
-    const fileExt = file.name.split('.').pop()?.toLowerCase()
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf'
+    const allowedTypes = ['pdf', 'epub', 'txt', 'fb2', 'mobi', 'djvu']
+    const fileType = allowedTypes.includes(fileExt) ? fileExt : 'pdf'
     const fileName = `${user.id}/${Date.now()}.${fileExt}`
     const { error: uploadError } = await supabase.storage.from('books').upload(fileName, file)
     if (uploadError) { setMessage('Ошибка загрузки: ' + uploadError.message); setUploading(false); return }
 
     const { data: { publicUrl } } = supabase.storage.from('books').getPublicUrl(fileName)
     const { error: dbError } = await supabase.from('books').insert({
-      user_id: user.id, title, author, file_url: publicUrl, file_type: fileExt === 'epub' ? 'epub' : 'pdf',
+      user_id: user.id, title, author, file_url: publicUrl, file_type: fileType,
     })
     if (dbError) { setMessage('Ошибка сохранения: ' + dbError.message); setUploading(false); return }
 
@@ -65,10 +67,10 @@ export default function UploadBook() {
                 <div className="text-center" style={{ color: 'var(--color-text-secondary)' }}>
                   <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                   <p className="text-sm">Выберите файл</p>
-                  <p className="text-xs mt-1">PDF или EPUB</p>
+                  <p className="text-xs mt-1">PDF, EPUB, TXT, FB2, MOBI, DJVU</p>
                 </div>
               )}
-              <input type="file" accept=".pdf,.epub" onChange={e => setFile(e.target.files?.[0] || null)} className="hidden" />
+              <input type="file" accept=".pdf,.epub,.txt,.fb2,.mobi,.djvu" onChange={e => setFile(e.target.files?.[0] || null)} className="hidden" />
             </label>
           </div>
           <button type="submit" disabled={uploading || !file || !title}

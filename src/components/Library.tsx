@@ -162,6 +162,10 @@ function BookCard({ book, onDelete }: { book: Book; onDelete: (id: string, url: 
             )}
           </div>
         </Link>
+        <span className="absolute bottom-1.5 left-1.5 text-[10px] font-semibold px-1.5 py-0.5 rounded"
+          style={{ background: 'rgba(0,0,0,0.5)', color: '#fff' }}>
+          {book.file_type.toUpperCase()}
+        </span>
         <button
           onClick={() => onDelete(book.id, book.file_url)}
           className="absolute top-1.5 right-1.5 p-1.5 rounded-lg transition hover:opacity-80"

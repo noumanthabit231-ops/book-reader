@@ -11,7 +11,7 @@ CREATE TABLE books (
   author TEXT DEFAULT '',
   cover_url TEXT,
   file_url TEXT NOT NULL,
-  file_type TEXT NOT NULL CHECK (file_type IN ('pdf', 'epub')),
+  file_type TEXT NOT NULL,
   summary TEXT,
   summary_detailed TEXT,
   page_count INTEGER,
