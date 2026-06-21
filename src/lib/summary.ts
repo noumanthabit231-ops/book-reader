@@ -47,23 +47,38 @@ async function extractFb2Text(url: string): Promise<string> {
   return text
 }
 
-/** Извлекает текст из EPUB (простой разбор без epub.js) */
+/** Извлекает текст из EPUB через JSZip */
 async function extractEpubText(url: string): Promise<string> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Ошибка загрузки EPUB: ${res.status}`)
   const blob = await res.blob()
-  const text = await blob.text()
-  // EPUB содержит XHTML внутри бинарного ZIP. Ищем текстовые блоки.
-  const cleaned = text
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&[a-z]+;/g, '')
-    .replace(/\s{2,}/g, '\n')
-    .trim()
-  if (!cleaned || cleaned.length < 100) throw new Error('EPUB не содержит читаемого текста')
-  return cleaned
+  const JSZip = (await import('jszip')).default
+  const zip = await JSZip.loadAsync(blob)
+
+  const parts: string[] = []
+  for (const [name, file] of Object.entries(zip.files)) {
+    if (file.dir) continue
+    if (!/\.(xhtml|html|htm|xml)$/i.test(name)) continue
+    try {
+      const content = await file.async('text')
+      // Убираем теги, оставляем только текст
+      const text = content
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<[^>]+>/g, '\n')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&[a-z]+;/g, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim()
+      if (text.length > 50) parts.push(text)
+    } catch { /* skip corrupted files */ }
+  }
+
+  const fullText = parts.join('\n\n')
+  if (!fullText.trim() || fullText.length < 100) {
+    throw new Error('EPUB не содержит читаемого текста')
+  }
+  return fullText
 }
 
 export async function generateSummary(
