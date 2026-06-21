@@ -58,10 +58,12 @@ async function extractEpubText(url: string): Promise<string> {
   const parts: string[] = []
   for (const [name, file] of Object.entries(zip.files)) {
     if (file.dir) continue
-    if (!/\.(xhtml|html|htm|xml)$/i.test(name)) continue
+    // Только xhtml/html (не xml/opf/ncx — это метаданные)
+    if (!/\.(xhtml|html|htm)$/i.test(name)) continue
+    // Пропускаем оглавление
+    if (/toc|nav|cover|title/i.test(name)) continue
     try {
       const content = await file.async('text')
-      // Убираем теги, оставляем только текст
       const text = content
         .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
         .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
@@ -70,8 +72,9 @@ async function extractEpubText(url: string): Promise<string> {
         .replace(/&[a-z]+;/g, '')
         .replace(/\n{3,}/g, '\n\n')
         .trim()
-      if (text.length > 50) parts.push(text)
-    } catch { /* skip corrupted files */ }
+      // Только если это реальный текст, а не короткая метка
+      if (text.split(/\s+/).length > 30) parts.push(text)
+    } catch { /* skip */ }
   }
 
   const fullText = parts.join('\n\n')
