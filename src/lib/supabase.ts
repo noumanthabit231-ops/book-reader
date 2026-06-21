@@ -14,6 +14,7 @@ export type Book = {
   file_url: string
   file_type: 'pdf' | 'epub'
   summary: string | null
+  summary_detailed: string | null
   page_count: number | null
   created_at: string
 }

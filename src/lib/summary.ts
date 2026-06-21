@@ -1,30 +1,33 @@
 import { type Book } from './supabase'
 
-/**
- * Генерирует краткий пересказ книги через DeepSeek API.
- *
- * DeepSeek совместим с OpenAI API.
- * Ключ: VITE_AI_API_KEY
- * URL (по умолч.): https://api.deepseek.com/v1/chat/completions
- * Модель (по умолч.): deepseek-chat
- *
- * Чтобы переключиться на другой API — измени VITE_AI_API_URL и VITE_AI_MODEL.
- */
+export type SummaryMode = 'short' | 'detailed'
 
-export async function generateSummary(book: Book): Promise<string> {
+export async function generateSummary(book: Book, mode: SummaryMode = 'short'): Promise<string> {
   const apiKey = import.meta.env.VITE_AI_API_KEY
   const apiUrl = import.meta.env.VITE_AI_API_URL || 'https://api.deepseek.com/v1/chat/completions'
   const model = import.meta.env.VITE_AI_MODEL || 'deepseek-chat'
 
   if (!apiKey) {
-    await new Promise(r => setTimeout(r, 1500))
+    await new Promise(r => setTimeout(r, 1000))
+    if (mode === 'short') {
+      return (
+        `**Краткий пересказ**\n\n` +
+        `Настрой AI-ключ в Vercel → Settings → Environment Variables:\n` +
+        `\`VITE_AI_API_KEY=твой_к...\n` +
+        `После Redeploy пересказ заработает.`
+      )
+    }
     return (
-      `**Подключи AI, чтобы получить пересказ**\n\n` +
-      `Добавь API-ключ в Vercel → Settings → Environment Variables:\n` +
-      `\`VITE_AI_API_KEY=твой_ключ\`\n\n` +
-      `После этого сделай Redeploy.`
+      `**Подробный пересказ**\n\n` +
+      `Настрой AI-ключ в Vercel → Settings → Environment Variables:\n` +
+      `\`VITE_AI_API_KEY=твой_к...\n` +
+      `После Redeploy пересказ заработает.`
     )
   }
+
+  const systemPrompt = mode === 'short'
+    ? 'Ты — литературный критик. Напиши КРАТКИЙ пересказ книги на русском языке: 2-3 абзаца. Только самое главное: основной сюжет, ключевые персонажи, главная идея. Пиши ёмко, без воды.'
+    : 'Ты — литературный критик. Напиши ПОДРОБНЫЙ пересказ книги на русском языке: 5-7 абзацев. Опиши сюжет по главам/частям, раскрой персонажей, их мотивацию, ключевые сцены, главную идею и значение книги. Пиши содержательно и интересно.'
 
   const response = await fetch(apiUrl, {
     method: 'POST',
@@ -35,16 +38,13 @@ export async function generateSummary(book: Book): Promise<string> {
     body: JSON.stringify({
       model,
       messages: [
-        {
-          role: 'system',
-          content: 'Ты — литературный критик. Напиши краткий пересказ книги на русском языке: 2-3 абзаца. Опиши основной сюжет, ключевых персонажей и главную идею. Пиши увлекательно, но ёмко.',
-        },
+        { role: 'system', content: systemPrompt },
         {
           role: 'user',
-          content: `Напиши краткий пересказ книги "${book.title}"${book.author ? `, автор: ${book.author}` : ''}.`,
+          content: `Напиши пересказ книги "${book.title}"${book.author ? `, автор: ${book.author}` : ''}.`,
         },
       ],
-      max_tokens: 800,
+      max_tokens: mode === 'short' ? 800 : 1500,
       temperature: 0.7,
     }),
   })

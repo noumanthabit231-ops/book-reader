@@ -13,6 +13,7 @@ CREATE TABLE books (
   file_url TEXT NOT NULL,
   file_type TEXT NOT NULL CHECK (file_type IN ('pdf', 'epub')),
   summary TEXT,
+  summary_detailed TEXT,
   page_count INTEGER,
   created_at TIMESTAMPTZ DEFAULT now()
 );
