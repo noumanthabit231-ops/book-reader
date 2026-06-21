@@ -14,18 +14,16 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(!!session)
     })
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(!!session)
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
   if (session === null) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <p className="text-zinc-500">Загрузка...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
+        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Загрузка...</p>
       </div>
     )
   }

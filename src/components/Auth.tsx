@@ -37,7 +37,7 @@ export default function Auth() {
             <line x1="12" y1="6" x2="12" y2="10"/>
             <line x1="12" y1="13" x2="12.01" y2="13"/>
           </svg>
-          <h1 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>BookReader</h1>
+          <h1 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Читай AI</h1>
           <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>Ваша личная библиотека</p>
         </div>
 
