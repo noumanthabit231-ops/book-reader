@@ -1,45 +1,36 @@
 import { type Book } from './supabase'
 
 /**
- * Генерирует краткий пересказ книги через OpenRouter (или OpenAI).
+ * Генерирует краткий пересказ книги через DeepSeek API.
  *
- * Как подключить:
- * 1. Получи API-ключ на https://openrouter.ai/keys (бесплатно $1)
- * 2. Добавь в .env или Vercel Environment Variables:
- *    VITE_AI_API_KEY=sk-or-v1-...
- *    VITE_AI_API_URL=https://openrouter.ai/api/v1/chat/completions  (по желанию)
- *    VITE_AI_MODEL=openai/gpt-4o-mini  (по желанию, по умолч. openai/gpt-4o-mini)
+ * DeepSeek совместим с OpenAI API.
+ * Ключ: VITE_AI_API_KEY
+ * URL (по умолч.): https://api.deepseek.com/v1/chat/completions
+ * Модель (по умолч.): deepseek-chat
  *
- * Если VITE_AI_API_KEY не указан — показывает заглушку с инструкцией.
+ * Чтобы переключиться на другой API — измени VITE_AI_API_URL и VITE_AI_MODEL.
  */
 
 export async function generateSummary(book: Book): Promise<string> {
   const apiKey = import.meta.env.VITE_AI_API_KEY
-  const apiUrl = import.meta.env.VITE_AI_API_URL || 'https://openrouter.ai/api/v1/chat/completions'
-  const model = import.meta.env.VITE_AI_MODEL || 'openai/gpt-4o-mini'
+  const apiUrl = import.meta.env.VITE_AI_API_URL || 'https://api.deepseek.com/v1/chat/completions'
+  const model = import.meta.env.VITE_AI_MODEL || 'deepseek-chat'
 
-  // Если нет API ключа — заглушка
   if (!apiKey) {
     await new Promise(r => setTimeout(r, 1500))
     return (
       `**Подключи AI, чтобы получить пересказ**\n\n` +
-      `1. Зарегистрируйся на https://openrouter.ai/keys\n` +
-      `2. Создай API-ключ (бесплатно $1, хватит надолго)\n` +
-      `3. Добавь в Vercel → Settings → Environment Variables:\n` +
-      `   \`VITE_AI_API_KEY=sk-or-v1-твой-ключ\`\n` +
-      `4. Сделай Redeploy\n\n` +
-      `После этого AI будет генерировать краткий пересказ любой книги за пару секунд.`
+      `Добавь API-ключ в Vercel → Settings → Environment Variables:\n` +
+      `\`VITE_AI_API_KEY=твой_ключ\`\n\n` +
+      `После этого сделай Redeploy.`
     )
   }
 
-  // Реальный запрос к API
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
-      'HTTP-Referer': window.location.origin,
-      'X-Title': 'BookReader',
     },
     body: JSON.stringify({
       model,
