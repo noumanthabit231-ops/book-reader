@@ -38,7 +38,10 @@ export default function Library() {
       <div className="max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Библиотека</h1>
+          <div>
+            <h1 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Читай AI</h1>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>Моя библиотека</p>
+          </div>
           <div className="flex items-center gap-2">
             <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: 'var(--color-border)' }}>
               <button
