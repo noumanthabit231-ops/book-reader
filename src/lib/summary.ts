@@ -47,24 +47,23 @@ async function extractFb2Text(url: string): Promise<string> {
   return text
 }
 
-/** Извлекает текст из EPUB через epubjs */
+/** Извлекает текст из EPUB (простой разбор без epub.js) */
 async function extractEpubText(url: string): Promise<string> {
-  const ePub = (await import('epubjs')).default
-  const book = ePub(url)
-  await book.ready
-  const spine = await book.loaded.spine
-  const parts: string[] = []
-  for (const item of (spine as any).items || []) {
-    try {
-      const doc = await item.load(book.load.bind(book))
-      const text = (doc as Document).body?.textContent?.trim() || ''
-      if (text) parts.push(text)
-    } catch { /* skip broken sections */ }
-  }
-  book.destroy()
-  const fullText = parts.join('\n\n')
-  if (!fullText.trim()) throw new Error('EPUB не содержит текста')
-  return fullText
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Ошибка загрузки EPUB: ${res.status}`)
+  const blob = await res.blob()
+  const text = await blob.text()
+  // EPUB содержит XHTML внутри бинарного ZIP. Ищем текстовые блоки.
+  const cleaned = text
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&[a-z]+;/g, '')
+    .replace(/\s{2,}/g, '\n')
+    .trim()
+  if (!cleaned || cleaned.length < 100) throw new Error('EPUB не содержит читаемого текста')
+  return cleaned
 }
 
 export async function generateSummary(
