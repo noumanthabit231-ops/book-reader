@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase, type Book } from '../lib/supabase'
 import { generateSummary, type SummaryMode } from '../lib/summary'
@@ -13,6 +13,7 @@ export default function BookSummary() {
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(true)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => { if (id) loadBook() }, [id])
 
@@ -30,10 +31,20 @@ export default function BookSummary() {
     if (!book) return
     setGenerating(mode)
     setError('')
-    setStatus('Читаю книгу...')
+    setStatus('')
+
+    // Создаём AbortController
+    abortRef.current?.abort()
+    const ac = new AbortController()
+    abortRef.current = ac
+
+    // Таймаут 3 минуты
+    const timeoutId = setTimeout(() => ac.abort(), 180000)
+
     try {
-      const text = await generateSummary(book, mode, setStatus)
+      const text = await generateSummary(book, mode, setStatus, ac.signal)
       setStatus('')
+
       if (mode === 'short') {
         setSummary(text)
         await supabase.from('books').update({ summary: text }).eq('id', book.id)
@@ -42,13 +53,27 @@ export default function BookSummary() {
         await supabase.from('books').update({ summary_detailed: text }).eq('id', book.id)
       }
     } catch (e: any) {
-      setError(e.message || 'Ошибка генерации')
+      if (e.name === 'AbortError') {
+        setError('Таймаут. Книга слишком большая для обработки. Попробуйте TXT-версию.')
+      } else {
+        setError(e.message || 'Ошибка генерации')
+      }
+    } finally {
+      clearTimeout(timeoutId)
+      setGenerating(null)
     }
+  }
+
+  const handleCancel = () => {
+    abortRef.current?.abort()
     setGenerating(null)
+    setStatus('')
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}><p style={{ color: 'var(--color-text-secondary)' }}>Загрузка...</p></div>
   if (!book) return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}><p style={{ color: 'var(--color-text-secondary)' }}>Книга не найдена</p></div>
+
+  const currentSummary = activeTab === 'short' ? summary : detailedSummary
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
@@ -65,108 +90,87 @@ export default function BookSummary() {
               <div>
                 <h1 className="text-lg font-semibold" style={{ color: 'var(--color-text)' }}>{book.title}</h1>
                 {book.author && <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{book.author}</p>}
+                <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>Формат: {book.file_type.toUpperCase()}</p>
               </div>
             </div>
           </div>
 
           {/* Tabs */}
           <div className="flex border-b" style={{ borderColor: 'var(--color-border)' }}>
-            <button
-              onClick={() => setActiveTab('short')}
-              className="flex-1 py-3 text-sm font-medium transition text-center"
-              style={{
-                color: activeTab === 'short' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                borderBottom: activeTab === 'short' ? '2px solid var(--color-accent)' : '2px solid transparent',
-              }}
-            >
-              Краткий
-            </button>
-            <button
-              onClick={() => setActiveTab('detailed')}
-              className="flex-1 py-3 text-sm font-medium transition text-center"
-              style={{
-                color: activeTab === 'detailed' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                borderBottom: activeTab === 'detailed' ? '2px solid var(--color-accent)' : '2px solid transparent',
-              }}
-            >
-              Подробный
-            </button>
+            {(['short', 'detailed'] as SummaryMode[]).map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                className="flex-1 py-3 text-sm font-medium transition text-center"
+                style={{
+                  color: activeTab === tab ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  borderBottom: activeTab === tab ? '2px solid var(--color-accent)' : '2px solid transparent',
+                }}
+              >{tab === 'short' ? 'Краткий' : 'Подробный'}</button>
+            ))}
           </div>
 
           {/* Content */}
           <div className="p-6">
-            {activeTab === 'short' ? (
-              summary ? (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>Краткий пересказ</h2>
-                    <button onClick={() => handleGenerate('short')} disabled={generating === 'short'}
-                      className="text-xs transition" style={{ color: 'var(--color-link)' }}>
-                      {generating === 'short' ? 'Генерация...' : 'Обновить'}
-                    </button>
-                  </div>
-                  <div className="text-sm leading-relaxed whitespace-pre-wrap font-serif" style={{ color: 'var(--color-text)' }}>
-                    {summary}
-                  </div>
+            {/* Generating state */}
+            {generating && (
+              <div className="text-center py-6 space-y-3">
+                <div className="animate-pulse">
+                  <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-3"
+                    style={{ borderColor: 'var(--color-border)', borderTopColor: 'var(--color-accent)' }} />
                 </div>
-              ) : (
-                <div className="text-center py-6">
-                  <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>Краткий пересказ ещё не готов</p>
-                  <GenerateButton mode="short" generating={generating} onGenerate={handleGenerate} />
-                </div>
-              )
-            ) : (
-              detailedSummary ? (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>Подробный пересказ</h2>
-                    <button onClick={() => handleGenerate('detailed')} disabled={generating === 'detailed'}
-                      className="text-xs transition" style={{ color: 'var(--color-link)' }}>
-                      {generating === 'detailed' ? 'Генерация...' : 'Обновить'}
-                    </button>
-                  </div>
-                  <div className="text-sm leading-relaxed whitespace-pre-wrap font-serif" style={{ color: 'var(--color-text)' }}>
-                    {detailedSummary}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>Подробный пересказ ещё не готов</p>
-                  <GenerateButton mode="detailed" generating={generating} onGenerate={handleGenerate} />
-                </div>
-              )
+                <p className="text-sm font-medium" style={{ color: 'var(--color-accent)' }}>
+                  {status || 'Генерация...'}
+                </p>
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+                  {activeTab === 'short' ? 'Краткий пересказ' : 'Подробный пересказ'} — это займёт до 2 минут
+                </p>
+                <button onClick={handleCancel}
+                  className="px-4 py-1.5 rounded-lg text-xs transition"
+                  style={{ color: 'var(--color-text-secondary)', background: '#f0ede6' }}>
+                  Отмена
+                </button>
+              </div>
             )}
 
-            {status && (
-              <p className="text-sm text-center py-3" style={{ color: 'var(--color-accent)' }}>{status}</p>
-            )}
+            {/* Result or empty state */}
+            {!generating && currentSummary ? (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>
+                    {activeTab === 'short' ? 'Краткий пересказ' : 'Подробный пересказ'}
+                  </h2>
+                  <button onClick={() => handleGenerate(activeTab)}
+                    className="text-xs transition" style={{ color: 'var(--color-link)' }}>
+                    Сгенерировать заново
+                  </button>
+                </div>
+                <div className="text-sm leading-relaxed whitespace-pre-wrap font-serif" style={{ color: 'var(--color-text)' }}>
+                  {currentSummary}
+                </div>
+              </div>
+            ) : !generating ? (
+              <div className="text-center py-6">
+                <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                  {activeTab === 'short' ? 'Краткий пересказ ещё не готов' : 'Подробный пересказ ещё не готов'}
+                </p>
+                <button
+                  onClick={() => handleGenerate(activeTab)}
+                  className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition"
+                  style={{ background: 'var(--color-button)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--color-button-hover)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'var(--color-button)'}
+                >
+                  {activeTab === 'short' ? 'Сгенерировать краткий' : 'Сгенерировать подробный'}
+                </button>
+              </div>
+            ) : null}
+
+            {/* Error */}
             {error && (
-              <p className="text-sm mt-3 p-2 rounded-lg" style={{ color: 'var(--color-danger)', background: '#fef2f2' }}>{error}</p>
+              <p className="text-sm mt-3 p-3 rounded-lg" style={{ color: 'var(--color-danger)', background: '#fef2f2' }}>{error}</p>
             )}
           </div>
         </div>
       </div>
     </div>
-  )
-}
-
-function GenerateButton({ mode, generating, onGenerate }: {
-  mode: SummaryMode
-  generating: 'short' | 'detailed' | null
-  onGenerate: (mode: SummaryMode) => void
-}) {
-  return (
-    <button
-      onClick={() => onGenerate(mode)}
-      disabled={generating !== null}
-      className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition disabled:opacity-50"
-      style={{ background: 'var(--color-button)' }}
-      onMouseEnter={e => !generating && (e.currentTarget.style.background = 'var(--color-button-hover)')}
-      onMouseLeave={e => !generating && (e.currentTarget.style.background = 'var(--color-button)')}
-    >
-      {generating === mode ? 'Генерация...' : (
-        mode === 'short' ? 'Сгенерировать краткий' : 'Сгенерировать подробный'
-      )}
-    </button>
   )
 }

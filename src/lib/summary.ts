@@ -2,94 +2,154 @@ import { type Book } from './supabase'
 
 export type SummaryMode = 'short' | 'detailed'
 
-/** Извлекает весь текст из PDF */
-async function extractPdfText(url: string): Promise<string> {
+// Локальный воркер — надёжнее CDN
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+
+async function getPdfjsLib() {
   const pdfjsLib = await import('pdfjs-dist')
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.296/pdf.worker.min.mjs'
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
+  return pdfjsLib
+}
+
+/** Извлекает весь текст из PDF — все страницы */
+async function extractPdfText(url: string): Promise<string> {
+  const pdfjsLib = await getPdfjsLib()
   const doc = await pdfjsLib.getDocument({ url }).promise
   const parts: string[] = []
   for (let i = 1; i <= doc.numPages; i++) {
     const page = await doc.getPage(i)
     const content = await page.getTextContent()
-    parts.push(content.items.map((item: any) => item.str).join(' '))
+    const text = content.items.map((item: any) => item.str).join(' ')
+    if (text.trim()) parts.push(text)
   }
-  return parts.join('\n\n')
+  const fullText = parts.join('\n\n')
+  if (!fullText.trim()) throw new Error('PDF не содержит текстового слоя (возможно, сканированная книга)')
+  return fullText
 }
 
 /** Извлекает весь текст из TXT */
 async function extractTxtText(url: string): Promise<string> {
   const res = await fetch(url)
-  return await res.text()
+  if (!res.ok) throw new Error(`Ошибка загрузки TXT: ${res.status}`)
+  const text = await res.text()
+  if (!text.trim()) throw new Error('TXT файл пуст')
+  return text
 }
 
 /** Извлекает весь текст из FB2 */
 async function extractFb2Text(url: string): Promise<string> {
   const res = await fetch(url)
+  if (!res.ok) throw new Error(`Ошибка загрузки FB2: ${res.status}`)
   const xml = await res.text()
   const body = xml.match(/<body>[\s\S]*?<\/body>/i)?.[0] || xml
-  return body.replace(/<[^>]+>/g, '').trim()
+  const text = body.replace(/<[^>]+>/g, '').trim()
+  if (!text) throw new Error('FB2 файл пуст или не содержит текста в <body>')
+  return text
 }
 
-export async function generateSummary(book: Book, mode: SummaryMode = 'short', onStatus?: (msg: string) => void): Promise<string> {
+/** Извлекает текст из EPUB через epubjs */
+async function extractEpubText(url: string): Promise<string> {
+  const ePub = (await import('epubjs')).default
+  const book = ePub(url)
+  await book.ready
+  const spine = await book.loaded.spine
+  const parts: string[] = []
+  for (const item of (spine as any).items || []) {
+    try {
+      const doc = await item.load(book.load.bind(book))
+      const text = (doc as Document).body?.textContent?.trim() || ''
+      if (text) parts.push(text)
+    } catch { /* skip broken sections */ }
+  }
+  book.destroy()
+  const fullText = parts.join('\n\n')
+  if (!fullText.trim()) throw new Error('EPUB не содержит текста')
+  return fullText
+}
+
+export async function generateSummary(
+  book: Book,
+  mode: SummaryMode = 'short',
+  onStatus?: (msg: string) => void,
+  signal?: AbortSignal,
+): Promise<string> {
   const apiKey = import.meta.env.VITE_AI_API_KEY
   const apiUrl = import.meta.env.VITE_AI_API_URL || 'https://api.deepseek.com/v1/chat/completions'
   const model = import.meta.env.VITE_AI_MODEL || 'deepseek-chat'
 
   if (!apiKey) {
     const label = mode === 'short' ? 'Краткий' : 'Подробный'
-    return `**${label} пересказ**\n\nНастрой AI-ключ в Vercel → Settings → Environment Variables:\nVITE_AI_API_KEY=ваш_ключ\nПосле Redeploy пересказ заработает.`
+    return `**${label} пересказ**\n\nНастрой AI-ключ в Vercel → Settings → Environment Variables:\nVITE_AI_API_KEY=***\nПосле Redeploy пересказ заработает.\n\nМожешь использовать DeepSeek (https://platform.deepseek.com) — бесплатно.`
   }
 
-  // Извлекаем текст из файла
-  onStatus?.('Читаю книгу...')
-  let bookText = ''
-  try {
-    if (book.file_type === 'pdf') {
-      bookText = await extractPdfText(book.file_url)
-    } else if (book.file_type === 'txt') {
-      bookText = await extractTxtText(book.file_url)
-    } else if (book.file_type === 'fb2') {
-      bookText = await extractFb2Text(book.file_url)
-    }
-  } catch (e: any) {
-    throw new Error(`Не удалось прочитать книгу: ${e.message || 'ошибка извлечения текста'}`)
+  // Шаг 1: извлечение текста
+  const extractors: Record<string, (url: string) => Promise<string>> = {
+    pdf: extractPdfText,
+    txt: extractTxtText,
+    fb2: extractFb2Text,
+    epub: extractEpubText,
   }
 
-  if (!bookText || bookText.trim().length < 50) {
+  const extractor = extractors[book.file_type]
+  if (!extractor) {
+    throw new Error(`Формат ${book.file_type.toUpperCase()} не поддерживает извлечение текста. Загрузите PDF, TXT, FB2 или EPUB.`)
+  }
+
+  onStatus?.(`Извлекаю текст из ${book.file_type.toUpperCase()}...`)
+  const bookText = await extractor(book.file_url)
+
+  if (!bookText || bookText.trim().length < 100) {
     throw new Error(
-      'Не удалось извлечь текст из файла. Возможно, это сканированная книга (изображения, а не текст). ' +
-      'Попробуй другой формат (TXT, EPUB).'
+      `Извлечено всего ${bookText?.length || 0} символов. ` +
+      'Возможно, файл повреждён или это сканированная книга (изображения без текстового слоя). ' +
+      'Попробуйте загрузить книгу в TXT или EPUB.'
     )
   }
 
-  onStatus?.('Отправляю AI...')
+  onStatus?.(`Текст извлечён (${bookText.length} символов). Отправляю AI...`)
 
+  // Шаг 2: отправка AI
   const systemPrompt = mode === 'short'
-    ? 'Ты — литературный критик. Напиши КРАТКИЙ пересказ книги на русском языке: 2-3 абзаца. Сюжет, персонажи, главная идея. НЕ выдумывай — опирайся ТОЛЬКО на текст книги, который я даю ниже.'
-    : 'Ты — литературный критик. Напиши ПОДРОБНЫЙ пересказ книги на русском языке: 5-7 абзацев. Сюжет по частям, персонажи, их мотивация, ключевые сцены. НЕ выдумывай — используй ТОЛЬКО текст книги.'
+    ? 'Ты — литературный критик. Напиши КРАТКИЙ пересказ книги на русском языке: 2-3 абзаца. Только сюжет, ключевые персонажи, главная идея. КРАТКО. НЕ выдумывай — опирайся ТОЛЬКО на предоставленный текст.'
+    : 'Ты — литературный критик. Напиши ПОДРОБНЫЙ пересказ книги на русском языке: 5-7 абзацев. Сюжет по частям, персонажи и их мотивация, ключевые сцены, идея. НЕ выдумывай — опирайся ТОЛЬКО на предоставленный текст.'
 
-  const userMessage = `ВОТ ПОЛНЫЙ ТЕКСТ КНИГИ "${book.title}"${book.author ? ` (${book.author})` : ''}:\n\n"""\n${bookText}\n"""\n\nНапиши пересказ на основе ЭТОГО текста. Не выдумывай ничего, чего нет в тексте.`
+  const userMessage = `Вот полный текст книги "${book.title}"${book.author ? `, автор: ${book.author}` : ''}:\n\n"""\n${bookText}\n"""\n\nНапиши ${mode === 'short' ? 'краткий' : 'подробный'} пересказ на основе этого текста. Если текст обрывается на середине — напиши что доступно.`
 
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMessage },
-      ],
-      max_tokens: mode === 'short' ? 2000 : 4000,
-      temperature: 0.1, // минимум творчества — строго по тексту
-    }),
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 120000) // 2 минуты максимум
+  if (signal) signal.addEventListener('abort', () => controller.abort())
 
-  if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`AI API error: ${response.status} — ${err}`)
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
+        ],
+        max_tokens: mode === 'short' ? 2000 : 4000,
+        temperature: 0.1,
+      }),
+      signal: controller.signal,
+    })
+
+    if (!response.ok) {
+      const err = await response.text()
+      throw new Error(`Ошибка AI API (${response.status}): ${err.slice(0, 200)}`)
+    }
+
+    const data = await response.json()
+    const result = data.choices?.[0]?.message?.content
+
+    if (!result || result.trim().length < 30) {
+      throw new Error('AI вернул пустой или слишком короткий ответ. Попробуйте ещё раз.')
+    }
+
+    onStatus?.('Готово')
+    return result
+  } finally {
+    clearTimeout(timeout)
   }
-
-  const data = await response.json()
-  return data.choices?.[0]?.message?.content || 'Не удалось получить пересказ'
 }
