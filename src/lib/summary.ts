@@ -2,7 +2,7 @@ import { type Book } from './supabase'
 
 export type SummaryMode = 'short' | 'detailed'
 
-/** Извлекает текст из PDF (первые 5 страниц) */
+/** Извлекает весь текст из PDF */
 async function extractPdfText(url: string): Promise<string> {
   try {
     const pdfjsLib = await import('pdfjs-dist')
@@ -10,38 +10,37 @@ async function extractPdfText(url: string): Promise<string> {
     pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 
     const doc = await pdfjsLib.getDocument({ url }).promise
-    const maxPages = Math.min(doc.numPages, 5)
     const parts: string[] = []
 
-    for (let i = 1; i <= maxPages; i++) {
+    for (let i = 1; i <= doc.numPages; i++) {
       const page = await doc.getPage(i)
       const content = await page.getTextContent()
       const text = content.items.map((item: any) => item.str).join(' ')
       parts.push(text)
     }
-    return parts.join('\n\n').slice(0, 3000)
+    return parts.join('\n\n').slice(0, 20000)
   } catch {
     return ''
   }
 }
 
-/** Извлекает текст из TXT */
+/** Извлекает весь текст из TXT */
 async function extractTxtText(url: string): Promise<string> {
   try {
     const res = await fetch(url)
-    return (await res.text()).slice(0, 3000)
+    return (await res.text()).slice(0, 20000)
   } catch {
     return ''
   }
 }
 
-/** Извлекает текст из FB2 (простой XML парсинг) */
+/** Извлекает весь текст из FB2 */
 async function extractFb2Text(url: string): Promise<string> {
   try {
     const res = await fetch(url)
     const xml = await res.text()
     const body = xml.match(/<body>[\s\S]*?<\/body>/i)?.[0] || xml
-    return body.replace(/<[^>]+>/g, '').trim().slice(0, 3000)
+    return body.replace(/<[^>]+>/g, '').trim().slice(0, 20000)
   } catch {
     return ''
   }
