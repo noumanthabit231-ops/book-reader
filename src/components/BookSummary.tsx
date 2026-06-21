@@ -11,6 +11,7 @@ export default function BookSummary() {
   const [activeTab, setActiveTab] = useState<'short' | 'detailed'>('short')
   const [generating, setGenerating] = useState<'short' | 'detailed' | null>(null)
   const [error, setError] = useState('')
+  const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { if (id) loadBook() }, [id])
@@ -29,8 +30,10 @@ export default function BookSummary() {
     if (!book) return
     setGenerating(mode)
     setError('')
+    setStatus('Читаю книгу...')
     try {
-      const text = await generateSummary(book, mode)
+      const text = await generateSummary(book, mode, setStatus)
+      setStatus('')
       if (mode === 'short') {
         setSummary(text)
         await supabase.from('books').update({ summary: text }).eq('id', book.id)
@@ -134,6 +137,9 @@ export default function BookSummary() {
               )
             )}
 
+            {status && (
+              <p className="text-sm text-center py-3" style={{ color: 'var(--color-accent)' }}>{status}</p>
+            )}
             {error && (
               <p className="text-sm mt-3 p-2 rounded-lg" style={{ color: 'var(--color-danger)', background: '#fef2f2' }}>{error}</p>
             )}
