@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase, type Book } from '../lib/supabase'
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 type BgMode = 'white' | 'sepia' | 'warm'
 
 async function loadPdfJs() {
   const pdfjsLib = await import('pdfjs-dist')
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url
-  ).href
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
   return pdfjsLib
 }
 
@@ -60,8 +59,9 @@ export default function BookReader() {
       const canvas = canvasRef.current
       const container = containerRef.current
 
-      // Простой расчёт: ширина контейнера минус отступы
-      const maxW = container ? container.clientWidth - 16 : window.innerWidth - 16
+      // Ширина с отступами, минимум 300px
+      const rawW = container ? container.clientWidth - 16 : window.innerWidth - 16
+      const maxW = Math.max(rawW, 300)
       const vp = page.getViewport({ scale: 1 })
       const scale = Math.min(maxW / vp.width, 2.0)
 
