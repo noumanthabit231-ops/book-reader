@@ -5,26 +5,21 @@ import { Link } from 'react-router-dom'
 export default function Library() {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
-  useEffect(() => {
-    loadBooks()
-  }, [])
+  useEffect(() => { loadBooks() }, [])
 
   const loadBooks = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-
     const { data } = await supabase
-      .from('books')
-      .select('*')
+      .from('books').select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-
     if (data) setBooks(data)
     setLoading(false)
   }
-
-  const handleLogout = () => supabase.auth.signOut()
 
   const handleDelete = async (id: string, fileUrl: string) => {
     const fileName = fileUrl.split('/').pop()
@@ -33,99 +28,175 @@ export default function Library() {
     setBooks(books.filter(b => b.id !== id))
   }
 
+  const filtered = books.filter(b =>
+    b.title.toLowerCase().includes(search.toLowerCase()) ||
+    (b.author && b.author.toLowerCase().includes(search.toLowerCase()))
+  )
+
   return (
-    <div className="min-h-screen bg-zinc-950">
-      <header className="border-b border-zinc-800 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-white">BookReader</h1>
-            <p className="text-zinc-500 text-sm">Ваша библиотека</p>
-          </div>
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Библиотека</h1>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: 'var(--color-border)' }}>
+              <button
+                onClick={() => setViewMode('grid')}
+                className="px-3 py-1.5 text-xs transition"
+                style={{
+                  background: viewMode === 'grid' ? 'var(--color-button)' : 'transparent',
+                  color: viewMode === 'grid' ? '#fff' : 'var(--color-text-secondary)',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className="px-3 py-1.5 text-xs transition"
+                style={{
+                  background: viewMode === 'list' ? 'var(--color-button)' : 'transparent',
+                  color: viewMode === 'list' ? '#fff' : 'var(--color-text-secondary)',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="7" width="14" height="2" rx="1"/><rect x="1" y="12" width="14" height="2" rx="1"/></svg>
+              </button>
+            </div>
             <Link
               to="/upload"
-              className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition"
+              className="px-4 py-1.5 rounded-lg text-sm font-medium text-white transition"
+              style={{ background: 'var(--color-button)' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--color-button-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--color-button)'}
             >
-              + Добавить книгу
+              + Добавить
             </Link>
             <button
-              onClick={handleLogout}
-              className="text-zinc-400 text-sm hover:text-white transition"
+              onClick={() => supabase.auth.signOut()}
+              className="text-sm transition"
+              style={{ color: 'var(--color-text-secondary)' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-secondary)'}
             >
               Выйти
             </button>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-5xl mx-auto p-6">
+        {/* Search */}
+        <div className="relative mb-6">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Поиск книг..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition"
+            style={{
+              background: 'var(--color-card)',
+              borderColor: 'var(--color-border)',
+              color: 'var(--color-text)',
+            }}
+          />
+        </div>
+
+        {/* Books */}
         {loading ? (
-          <div className="text-center text-zinc-500 py-20">Загрузка...</div>
-        ) : books.length === 0 ? (
+          <p className="text-center py-20" style={{ color: 'var(--color-text-secondary)' }}>Загрузка...</p>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-20">
-            <div className="text-6xl mb-4">📚</div>
-            <h2 className="text-xl font-medium text-white mb-2">Библиотека пуста</h2>
-            <p className="text-zinc-400 mb-6">Добавьте свою первую книгу</p>
-            <Link
-              to="/upload"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition"
-            >
-              Загрузить книгу
-            </Link>
+            <svg className="mx-auto mb-4 opacity-20" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            <h2 className="text-lg font-medium mb-2" style={{ color: 'var(--color-text)' }}>
+              {search ? 'Ничего не найдено' : 'Библиотека пуста'}
+            </h2>
+            <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              {search ? 'Попробуйте другой запрос' : 'Добавьте свою первую книгу'}
+            </p>
+            {!search && (
+              <Link
+                to="/upload"
+                className="inline-block px-6 py-2.5 rounded-xl text-sm font-medium text-white transition"
+                style={{ background: 'var(--color-button)' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--color-button-hover)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--color-button)'}
+              >
+                Загрузить книгу
+              </Link>
+            )}
+          </div>
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {filtered.map(book => (
+              <BookCard key={book.id} book={book} onDelete={handleDelete} />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {books.map(book => (
-              <div
-                key={book.id}
-                className="bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 group"
-              >
-                <Link to={`/reader/${book.id}`}>
-                  <div className="aspect-[3/4] bg-zinc-800 flex items-center justify-center">
-                    {book.cover_url ? (
-                      <img
-                        src={book.cover_url}
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-4xl">📖</span>
-                    )}
-                  </div>
-                </Link>
-                <div className="p-3">
-                  <Link to={`/reader/${book.id}`}>
-                    <h3 className="text-white text-sm font-medium truncate">{book.title}</h3>
-                    {book.author && (
-                      <p className="text-zinc-500 text-xs truncate">{book.author}</p>
-                    )}
-                  </Link>
-                  <div className="flex flex-col gap-1.5 mt-2">
-                    <Link
-                      to={`/reader/${book.id}`}
-                      className="text-xs text-blue-400 hover:text-blue-300 transition"
-                    >
-                      📖 Читать
-                    </Link>
-                    <Link
-                      to={`/summary/${book.id}`}
-                      className="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition px-2 py-1 rounded-lg text-center"
-                    >
-                      🤖 Пересказ
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(book.id, book.file_url)}
-                      className="text-xs text-red-400 hover:text-red-300 transition"
-                    >
-                      Удалить
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div className="space-y-1">
+            {filtered.map(book => (
+              <BookRow key={book.id} book={book} onDelete={handleDelete} />
             ))}
           </div>
         )}
-      </main>
+      </div>
+    </div>
+  )
+}
+
+function BookCard({ book, onDelete }: { book: Book; onDelete: (id: string, url: string) => void }) {
+  return (
+    <div
+      className="rounded-xl overflow-hidden group transition"
+      style={{ background: 'var(--color-card)', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+    >
+      <Link to={`/reader/${book.id}`}>
+        <div className="aspect-[3/4]" style={{ background: '#f0ede6' }}>
+          {book.cover_url ? (
+            <img src={book.cover_url} alt={book.title} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c4beb6" strokeWidth="1.5" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            </div>
+          )}
+        </div>
+      </Link>
+      <div className="p-3">
+        <Link to={`/reader/${book.id}`}>
+          <h3 className="text-sm font-medium truncate" style={{ color: 'var(--color-text)' }}>{book.title}</h3>
+          {book.author && <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--color-text-secondary)' }}>{book.author}</p>}
+        </Link>
+        <div className="flex items-center gap-2 mt-2">
+          <Link to={`/reader/${book.id}`} className="text-xs font-medium transition" style={{ color: 'var(--color-link)' }}>Читать</Link>
+          <Link to={`/summary/${book.id}`} className="text-xs font-medium transition" style={{ color: 'var(--color-accent)' }}>Пересказ</Link>
+          <button onClick={() => onDelete(book.id, book.file_url)} className="ml-auto text-xs transition" style={{ color: 'var(--color-danger)' }}>Удалить</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BookRow({ book, onDelete }: { book: Book; onDelete: (id: string, url: string) => void }) {
+  return (
+    <div
+      className="flex items-center gap-4 p-3 rounded-xl transition"
+      style={{ background: 'var(--color-card)' }}
+    >
+      <Link to={`/reader/${book.id}`} className="shrink-0">
+        <div className="w-10 h-14 rounded flex items-center justify-center" style={{ background: '#f0ede6' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4beb6" strokeWidth="1.5" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        </div>
+      </Link>
+      <div className="flex-1 min-w-0">
+        <Link to={`/reader/${book.id}`}>
+          <h3 className="text-sm font-medium truncate" style={{ color: 'var(--color-text)' }}>{book.title}</h3>
+          {book.author && <p className="text-xs mt-0.5 truncate" style={{ color: 'var(--color-text-secondary)' }}>{book.author}</p>}
+        </Link>
+      </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <Link to={`/summary/${book.id}`} className="text-xs font-medium transition" style={{ color: 'var(--color-accent)' }}>Пересказ</Link>
+        <button onClick={() => onDelete(book.id, book.file_url)} className="text-xs transition" style={{ color: 'var(--color-danger)' }}>Удалить</button>
+      </div>
     </div>
   )
 }
