@@ -15,17 +15,17 @@
 ---
 
 ## 1. MyBook (mybook.ru)
-**Почта:** partner@mybook.ru
+**Почта:** reklama@litres.ru (MyBook входит в LitRes)
 **Сайт:** https://mybook.ru
-**Суть:** Российский сервис электронных книг. 2M+ пользователей. Им логично купить готовый AI-продукт, а не разрабатывать самим.
+**Суть:** Российский сервис электронных книг. 2M+ пользователей. Входит в группу LitRes.
 
 **Письмо:**
 
 Тема: Продаю готовый AI-сервис для пересказа книг
 
-Здравствуйте, команда MyBook!
+Здравствуйте!
 
-Я разработал и запустил веб-сервис Читай AI — готовый продукт, который через AI делает краткие пересказы книг (PDF, EPUB, TXT, FB2). Полный код, домен, инфраструктура — всё работает.
+Я разработал и запустил веб-сервис Читай AI — готовый продукт, который через AI делает краткие пересказы книг (PDF, EPUB, TXT, FB2).
 
 Продаю проект целиком.
 
@@ -36,21 +36,22 @@
 - Домен chitai-ai.online + Vercel deploy
 - Весь код в GitHub репозитории
 
-**Что можете сделать с этим:**
+**Что можете сделать:**
 - Добавить AI-пересказы в MyBook как платную фичу
 - Использовать технологию для автоматических аннотаций
 - Запустить как отдельный сервис под вашим брендом
 
-Посмотреть вживую: https://www.chitai-ai.online
+Демо: https://www.chitai-ai.online
+Telegram: @shoma757
 
-Цена обсуждаема. Если интересно — напишите в Telegram @shoma757, покажу код, расскажу детали.
+Цена обсуждаема.
 
 Шамиль Бадалов
 
 ---
 
 ## 2. Bookmate (bookmate.com)
-**Контакт:** https://bookmate.com/contacts
+**Почта:** business@bookmate.com
 **Сайт:** https://bookmate.com
 **Суть:** Книжный сервис с подпиской, 10M+ скачиваний.
 
@@ -58,26 +59,21 @@
 
 Тема: Готовый AI-продукт для пересказа книг — продажа
 
-Hi Bookmate team,
+Hello Bookmate team,
 
-I built and launched Читай AI — a working web service that generates AI book summaries. It reads the full book and returns a short or detailed summary in seconds.
-
-I'm selling the project.
+I built and launched Читай AI — a working web service that generates AI book summaries. I'm selling the project.
 
 **What you get:**
 - Full source code (React + Vite + TypeScript + Tailwind)
-- Supabase project (Auth + Storage + DB, ready to scale)
+- Supabase project (Auth + Storage + DB)
 - DeepSeek AI integration
 - Domain chitai-ai.online
 - Vercel deployment
-- GitHub repository with commit history
 
-**Why Bookmate?**
 Your users browse thousands of books. With this tech, you can offer AI summaries as a premium feature — increasing engagement and revenue.
 
 Live demo: https://www.chitai-ai.online
-
-Price negotiable. Telegram: @shoma757
+Telegram: @shoma757
 
 Best regards,
 Shamil Badalov
@@ -85,7 +81,7 @@ Shamil Badalov
 ---
 
 ## 3. LitRes (litres.ru)
-**Почта:** partners@litres.ru
+**Почта:** partners@litres.ru (или litres@litres.ru)
 **Сайт:** https://litres.ru
 **Суть:** Крупнейшая книжная платформа в РФ.
 
@@ -105,14 +101,14 @@ Shamil Badalov
 Сайт: https://www.chitai-ai.online
 Telegram: @shoma757
 
-Цена обсуждаема. Посмотрите демо, потом поговорим.
+Цена обсуждаема.
 
 Шамиль Бадалов
 
 ---
 
 ## 4. FBReader (fbreader.org)
-**Почта:** support@fbreader.org
+**Почта:** helpdesk@fbreader.org
 **Сайт:** https://fbreader.org
 **Суть:** Open-source читалка, миллионы установок.
 
