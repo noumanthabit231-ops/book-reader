@@ -23,7 +23,7 @@
 
 Готов обсудить интеграцию.
 
-Шамиль, Telegram: @shamilshamilshamil
+Шамиль Бадалов, Telegram: @shoma757
 
 ---
 
@@ -51,7 +51,7 @@
 
 Если интересно — созвонимся, покажу демо.
 
-Шамиль
+Шамиль Бадалов
 
 ---
 
@@ -76,11 +76,11 @@
 Серверная часть готова, всё работает через API. 
 
 Сайт: https://www.chitai-ai.online
-Мой Telegram: @shamilshamilshamil
+Мой Telegram: @shoma757
 
 Готов показать демо и обсудить условия.
 
-Шамиль
+Шамиль Бадалов
 
 ---
 
@@ -105,12 +105,12 @@ Since FBReader is open-source and widely used, I'm proposing a plugin or integra
 I can build the plugin on my side. You just add it to the plugin catalog.
 
 Demo: https://www.chitai-ai.online
-My Telegram: @shamilshamilshamil
+My Telegram: @shoma757
 
 Let me know if you're interested.
 
 Best,
-Shamil
+Shamil Badalov
 
 ---
 
@@ -137,8 +137,8 @@ Our web demo is live: https://www.chitai-ai.online
 I'd love to discuss how this could work for PocketBook.
 
 Best regards,
-Shamil
-Telegram: @shamilshamilshamil
+Shamil Badalov
+Telegram: @shoma757
 
 ---
 
@@ -163,10 +163,10 @@ Telegram: @shamilshamilshamil
 Готов обсудить техническую реализацию и условия.
 
 Сайт: https://www.chitai-ai.online
-Telegram: @shamilshamilshamil
+Telegram: @shoma757
 
 Жду ответа!
-Шамиль
+Шамиль Бадалов
 
 ---
 
@@ -225,7 +225,7 @@ Link: https://www.chitai-ai.online
 
 **Тема:** Казахстанский стартап Читай AI запускает сервис AI-пересказов книг
 
-Коротко: Шамиль (имя) из Казахстана запустил веб-сервис, который через нейросеть DeepSeek создаёт краткие пересказы книг. Поддерживает PDF, EPUB, TXT, FB2. Бесплатно, вход через Google. Планы: B2V интеграция с книжными приложениями, подписка $5/мес.
+Коротко: Шамиль Бадалов (имя) из Казахстана запустил веб-сервис, который через нейросеть DeepSeek создаёт краткие пересказы книг. Поддерживает PDF, EPUB, TXT, FB2. Бесплатно, вход через Google. Планы: B2V интеграция с книжными приложениями, подписка $5/мес.
 
 Сайт: https://www.chitai-ai.online
 
@@ -264,7 +264,7 @@ What I need:
 
 My background: solo developer, bootstrapped this in 2 weeks.
 
-Telegram: @shamilshamilshamil
+Telegram: @shoma757
 
 ---
 
@@ -289,11 +289,11 @@ Telegram: @shamilshamilshamil
 3. Интеграцию платежей (Stripe)
 
 Сайт: https://www.chitai-ai.online
-Мой Telegram: @shamilshamilshamil
+Мой Telegram: @shoma757
 
 Готов провести демо и показать метрики.
 
-Шамиль
+Шамиль Бадалов
 
 ---
 
@@ -318,8 +318,8 @@ Tech: React + Supabase + DeepSeek
 Interested in connecting?
 
 Best,
-Shamil
-Telegram: @shamilshamilshamil
+Shamil Badalov
+Telegram: @shoma757
 
 ---
 
@@ -342,5 +342,5 @@ Stage: launched, 0 revenue, building traction
 
 Happy to chat.
 
-Shamil
-Telegram: @shamilshamilshamil
+Shamil Badalov
+Telegram: @shoma757
