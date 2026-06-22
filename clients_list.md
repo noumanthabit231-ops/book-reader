@@ -1,84 +1,111 @@
-# Список клиентов для Читай AI
+# Список покупателей — продажа Читай AI
+
+**Что продаётся:** готовый веб-сервис для AI-пересказов книг.
+- Код (React + Vite + TypeScript + Tailwind)
+- Домен chitai-ai.online
+- Проект Supabase (Auth + Storage + DB)
+- Деплой на Vercel
+- Google OAuth + Resend SMTP
+- DeepSeek AI интеграция
+- 2 режима пересказа (краткий/подробный)
+- Поддержка PDF, EPUB, TXT, FB2
+
+**Цена:** обсуждаемо
 
 ---
 
 ## 1. MyBook (mybook.ru)
 **Почта:** partner@mybook.ru
 **Сайт:** https://mybook.ru
-**Суть:** Российский сервис электронных книг с подпиской. 2M+ пользователей.
+**Суть:** Российский сервис электронных книг. 2M+ пользователей. Им логично купить готовый AI-продукт, а не разрабатывать самим.
 
 **Письмо:**
 
-Тема: AI-пересказы книг для пользователей MyBook
+Тема: Продаю готовый AI-сервис для пересказа книг
 
-Привет, команда MyBook!
+Здравствуйте, команда MyBook!
 
-Я сделал сервис Читай AI — он берёт книгу (PDF, EPUB) и через нейросеть DeepSeek делает краткий пересказ за 30 секунд. 
+Я разработал и запустил веб-сервис Читай AI — готовый продукт, который через AI делает краткие пересказы книг (PDF, EPUB, TXT, FB2). Полный код, домен, инфраструктура — всё работает.
 
-Ваши пользователи читают книги в MyBook. Многие хотят понять, стоит ли книга внимания, перед тем как читать. Или вспомнить ключевые идеи через месяц после прочтения.
+Продаю проект целиком.
 
-Предлагаю: добавить в MyBook кнопку «AI пересказ» рядом с каждой книгой. Мы обрабатываем текст, вы получаете пересказ. Revenue share 50/50.
+**Что входит:**
+- Фронтенд (React + TypeScript + Tailwind)
+- Backend на Supabase (Auth, Storage, Database)
+- Интеграция DeepSeek (AI-пересказы)
+- Домен chitai-ai.online + Vercel deploy
+- Весь код в GitHub репозитории
 
-Посмотрите как работает: https://www.chitai-ai.online
+**Что можете сделать с этим:**
+- Добавить AI-пересказы в MyBook как платную фичу
+- Использовать технологию для автоматических аннотаций
+- Запустить как отдельный сервис под вашим брендом
 
-Готов обсудить интеграцию.
+Посмотреть вживую: https://www.chitai-ai.online
 
-Шамиль Бадалов, Telegram: @shoma757
+Цена обсуждаема. Если интересно — напишите в Telegram @shoma757, покажу код, расскажу детали.
+
+Шамиль Бадалов
 
 ---
 
 ## 2. Bookmate (bookmate.com)
 **Контакт:** https://bookmate.com/contacts
 **Сайт:** https://bookmate.com
-**Суть:** Книжный сервис с подпиской, есть в РФ и СНГ. 10M+ скачиваний.
+**Суть:** Книжный сервис с подпиской, 10M+ скачиваний.
 
 **Письмо:**
 
-Тема: AI-пересказы для подписчиков Bookmate
+Тема: Готовый AI-продукт для пересказа книг — продажа
 
-Привет, Bookmate!
+Hi Bookmate team,
 
-У вас большая библиотека, и пользователи часто теряются в выборе. Я предлагаю решение — Читай AI.
+I built and launched Читай AI — a working web service that generates AI book summaries. It reads the full book and returns a short or detailed summary in seconds.
 
-Это веб-сервис, который загружает книгу, извлекает из неё текст и отправляет в DeepSeek. AI возвращает краткий (2-3 абзаца) или подробный (5-7 абзацев) пересказ на русском языке.
+I'm selling the project.
 
-Как это можно интегрировать:
-- Кнопка «Пересказ» на странице книги
-- Автоматические AI-аннотации к новинкам
-- Виджет «Суть книги за 1 минуту»
+**What you get:**
+- Full source code (React + Vite + TypeScript + Tailwind)
+- Supabase project (Auth + Storage + DB, ready to scale)
+- DeepSeek AI integration
+- Domain chitai-ai.online
+- Vercel deployment
+- GitHub repository with commit history
 
-Я уже сделал работающий прототип: https://www.chitai-ai.online
+**Why Bookmate?**
+Your users browse thousands of books. With this tech, you can offer AI summaries as a premium feature — increasing engagement and revenue.
 
-Если интересно — созвонимся, покажу демо.
+Live demo: https://www.chitai-ai.online
 
-Шамиль Бадалов
+Price negotiable. Telegram: @shoma757
+
+Best regards,
+Shamil Badalov
 
 ---
 
 ## 3. LitRes (litres.ru)
 **Почта:** partners@litres.ru
 **Сайт:** https://litres.ru
-**Суть:** Крупнейший книжный магазин в РФ. Огромная аудитория.
+**Суть:** Крупнейшая книжная платформа в РФ.
 
 **Письмо:**
 
-Тема: AI-аннотации для всех книг LitRes
+Тема: Продажа AI-сервиса пересказа книг (готовый продукт)
 
 Здравствуйте!
 
-Я разработал технологию, которая автоматически создаёт краткие и подробные пересказы книг через AI.
+Я продаю Читай AI — работающий веб-сервис для AI-пересказа книг. Всё готово: код, домен, серверная часть, AI интеграция.
 
-Для LitRes это может быть полезно:
-1. Автоматические AI-аннотации к каждой книге (экономия на редакторах)
-2. Кнопка «Краткий пересказ» — пользователь сразу понимает суть
-3. B2B для корпоративных клиентов — краткие выжимки бизнес-литературы
-
-Серверная часть готова, всё работает через API. 
+Для LitRes это может быть интересно:
+- Автоматические AI-аннотации ко всем книгам каталога
+- Новая платная подписка «AI пересказы»
+- Не нужно тратить месяцы на разработку — купить готовое
 
 Сайт: https://www.chitai-ai.online
-Мой Telegram: @shoma757
+Telegram: @shoma757
 
-Готов показать демо и обсудить условия.
+Цена обсуждаема. Посмотрите демо, потом поговорим.
 
 Шамиль Бадалов
 
@@ -87,27 +114,24 @@
 ## 4. FBReader (fbreader.org)
 **Почта:** support@fbreader.org
 **Сайт:** https://fbreader.org
-**Суть:** Популярная open-source читалка. Миллионы установок.
+**Суть:** Open-source читалка, миллионы установок.
 
 **Письмо:**
 
-Тема: Плагин AI-пересказа для FBReader
+Тема: AI book summary service — for sale
 
-Hi FBReader team!
+Hi FBReader team,
 
-I built Читай AI — a web service that extracts text from books (PDF, EPUB, TXT) and generates AI summaries using DeepSeek.
+I'm selling Читай AI — a web service that extracts text from books and generates AI summaries.
 
-Since FBReader is open-source and widely used, I'm proposing a plugin or integration:
-- User reads a book in FBReader
-- One tap sends the book to Читай AI
-- Returns a short or detailed summary in Russian
+The tech is ready. You can:
+- Integrate into FBReader as a plugin
+- Offer AI summaries to your users
+- Monetize as a premium feature
 
-I can build the plugin on my side. You just add it to the plugin catalog.
+Code: React + Supabase + DeepSeek. Live at https://www.chitai-ai.online
 
-Demo: https://www.chitai-ai.online
-My Telegram: @shoma757
-
-Let me know if you're interested.
+Interested? Telegram: @shoma757
 
 Best,
 Shamil Badalov
@@ -117,230 +141,179 @@ Shamil Badalov
 ## 5. PocketBook (pocketbook.ch)
 **Почта:** partner@pocketbook.ch
 **Сайт:** https://pocketbook.ch
-**Суть:** Производитель устройств для чтения. Европейский рынок.
+**Суть:** Производитель устройств для чтения.
 
 **Письмо:**
 
-Тема: AI summaries pre-installed on PocketBook devices
+Тема: AI book summary product — acquisition opportunity
 
 Dear PocketBook team,
 
-I created Читай AI — an AI summary service for books. It reads the entire book (PDF, EPUB, TXT) and generates a concise summary in seconds.
+I built Читай AI — a fully working AI summary service for books. It supports PDF, EPUB, TXT, FB2 and uses DeepSeek for high-quality summaries.
 
-Proposal:
-- Pre-install Читай AI on PocketBook devices
-- Users can get AI summaries without leaving the device
-- Works fully offline? (We can discuss an embedded version)
+I'm selling the entire project.
 
-Our web demo is live: https://www.chitai-ai.online
+Why PocketBook should consider it:
+- Pre-install on your devices (differentiator)
+- Drive accessory/web service revenue
+- Ready-to-go tech stack
 
-I'd love to discuss how this could work for PocketBook.
+Live demo + source code available. Price negotiable.
+
+Telegram: @shoma757
 
 Best regards,
 Shamil Badalov
-Telegram: @shoma757
 
 ---
 
 ## 6. AIReader (ai-reader.com)
 **Почта:** info@ai-reader.com
 **Сайт:** http://ai-reader.com
-**Суть:** Российская программа для чтения книг с голосовым управлением.
 
 **Письмо:**
 
-Тема: AI + AI — объединяем усилия
+Тема: Продаю AI-сервис для пересказа книг — готовый проект
 
 Привет, AIReader!
 
-У вас программа для чтения с AI-функциями. У меня сервис AI-пересказов. Давайте объединимся?
+Я продаю готовый проект — Читай AI. Сервис для AI-пересказа книг (PDF, EPUB, TXT). Всё работает, код в репозитории.
 
-Как я вижу интеграцию:
-- Пользователь читает книгу в AIReader
-- Хочет получить краткое содержание — нажимает кнопку
-- Мы обрабатываем, возвращаем пересказ
+Думаю, вам это подходит: AIReader + AI пересказы = логичная комбинация.
 
-Готов обсудить техническую реализацию и условия.
+Можете встроить в своё приложение или запустить как отдельный сервис.
 
 Сайт: https://www.chitai-ai.online
 Telegram: @shoma757
 
-Жду ответа!
+Цену обсудим.
+
 Шамиль Бадалов
 
 ---
 
 ## 7. Product Hunt
 **Сайт:** https://www.producthunt.com
-**Что делать:** Запустить Читай AI как продукт. Нужен аккаунт + тизер + описание.
 
-**Текст для запуска:**
+**Текст для поста (если решите запустить до продажи):**
 
-Title: Читай AI — Book summaries powered by AI
-Tagline: Upload any book, get a short or detailed summary in 30 seconds
+Title: Читай AI — AI book summaries in seconds
+Tagline: Upload any book, get a short or detailed summary. The AI reads the full text.
 Description: 
-Читай AI is a web app that lets you upload books (PDF, EPUB, TXT, FB2) and get AI-generated summaries. Two modes: short (2-3 paragraphs) or detailed (5-7 paragraphs). The AI reads the entire book — not just the title. Google login. Free to use.
+Читай AI is a web app that reads your book (PDF, EPUB, TXT, FB2) and generates a concise AI summary. Two modes: short (2-3 paragraphs) or detailed (5-7 paragraphs). Google login. Free to use.
 
-Built with: React, Supabase, DeepSeek, Vercel
+Built with React, Supabase, DeepSeek, Vercel.
 
 Link: https://www.chitai-ai.online
 
 ---
 
-## 8. VC.ru
-**Сайт:** https://vc.ru
-**Что делать:** Опубликовать статью-кейс
-
-**Тема статьи:** «Я сделал AI-сервис, который читает книги за вас — и вот что из этого вышло»
-
-План статьи:
-1. Идея — почему я это сделал (лень читать, но хочется знать суть)
-2. Как работает — загрузить книгу → AI читает → пересказ
-3. Технический стек — React, Supabase, DeepSeek, Vercel
-4. Сколько стоит содержать — $1.5 на 500 книг
-5. Планы — монетизация, B2B, партнёрства
-6. Ссылка: https://www.chitai-ai.online
-
----
-
-## 9. Habr
-**Сайт:** https://habr.com
-**Что делать:** Техническая статья
-
-**Тема:** «Создаём AI-читалку на React + Supabase + DeepSeek за выходные»
-
-О чём статья:
-- Архитектура: Vite, React-router, Tailwind
-- Supabase: Auth (Google OAuth), Storage (книги), DB (метаданные)
-- Извлечение текста из PDF (pdfjs-dist) и EPUB (JSZip)
-- DeepSeek API для пересказов
-- Деплой на Vercel
-- Проблемы: воркер pdf.js, извлечение текста из EPUB, лимиты токенов
-
----
-
-## 10. Forbes Kazakhstan
-**Сайт:** https://forbes.kz
-**Что делать:** Пресс-релиз
-
-**Тема:** Казахстанский стартап Читай AI запускает сервис AI-пересказов книг
-
-Коротко: Шамиль Бадалов (имя) из Казахстана запустил веб-сервис, который через нейросеть DeepSeek создаёт краткие пересказы книг. Поддерживает PDF, EPUB, TXT, FB2. Бесплатно, вход через Google. Планы: B2V интеграция с книжными приложениями, подписка $5/мес.
-
-Сайт: https://www.chitai-ai.online
-
----
-
-## 11. Astana Hub (уже писали)
-**Почта:** info@astanahub.com
-
----
-
-## 12. Starta Accelerator
+## 8. Starta Accelerator
 **Почта:** apply@starta.com
 **Сайт:** https://starta.com
-**Суть:** Акселератор для стартапов из СНГ. Дают $75-150k.
+**Суть:** Акселератор для стартапов из СНГ.
 
 **Письмо:**
 
-Тема: Читай AI — заявка на акселерацию
+Тема: Читай AI — готовый продукт, ищу buyer или инвестиции
 
 Hello Starta team,
 
-I'm applying with my project Читай AI — an AI-powered book summary web app.
+I'm a solo founder from Kazakhstan with a working product — Читай AI, an AI book summary web service.
 
-Key facts:
-- Working product: https://www.chitai-ai.online
-- 100+ users (organic)
-- Tech: React + Supabase + DeepSeek + Vercel
-- Supports PDF, EPUB, TXT, FB2
-- Google OAuth + Email login
-- $0 revenue yet — looking for traction
+Status: launched, fully functional, open for acquisition or investment.
+Tech: React + Supabase + DeepSeek + Vercel.
+Domain: chitai-ai.online
+Users: organic, growing.
 
-What I need:
-- Mentorship on B2B sales (book publishers, reading apps)
-- Help with monetization strategy
-- Network in CIS tech
+I'm open to:
+1. Full acquisition (code + domain + infra)
+2. Investment for scaling and B2B sales
 
-My background: solo developer, bootstrapped this in 2 weeks.
-
+Live demo: https://www.chitai-ai.online
 Telegram: @shoma757
+
+Happy to share metrics and code.
+
+Best,
+Shamil Badalov
 
 ---
 
-## 13. Leta Capital
+## 9. Leta Capital
 **Почта:** deal@leta.vc
 **Сайт:** https://leta.vc
-**Суть:** Венчурный фонд, инвестируют в AI/SAAS.
 
 **Письмо:**
 
-Тема: Читай AI — AI-пересказы книг. Ищу раунд.
+Тема: Читай AI — продажа или раунд
 
 Здравствуйте!
 
-Я основатель Читай AI — сервиса для AI-пересказов книг.
+Я основатель Читай AI — AI-сервиса для краткого пересказа книг.
 
-Продукт работает, код открыт, первые пользователи есть. Пока бесплатно, планирую подписку $5/мес.
-
-Ищу $50k на:
-1. Маркетинг (Product Hunt launch, таргет)
-2. B2B продажи (менеджер)
-3. Интеграцию платежей (Stripe)
+Продукт работает, код открыт для просмотра. Ищу либо стратегического покупателя, либо инвестиции $30-50k для найма маркетолога и B2B-менеджера.
 
 Сайт: https://www.chitai-ai.online
-Мой Telegram: @shoma757
+Telegram: @shoma757
 
-Готов провести демо и показать метрики.
+Демо по запросу.
 
 Шамиль Бадалов
 
 ---
 
-## 14. Flybridge
+## 10. Flybridge (flybridge.com)
 **Сайт:** https://flybridge.com
-**Почта:** через сайт
 
 **Письмо:**
 
+Subject: Читай AI — AI book summary startup, looking for exit or investment
+
 Dear Flybridge team,
 
-I'm building Читай AI — a web app that generates AI book summaries. Upload any book (PDF, EPUB, TXT, FB2) and get a short or detailed summary in 30 seconds.
+I built Читай AI — a fully functional AI book summary web app. Upload any book (PDF, EPUB), get a short or detailed AI summary.
 
-Why it matters:
-- People don't read books. They want the key ideas fast.
-- Existing solutions (Blinkist) have fixed library. We let you upload ANY book.
-- AI cost is $0.016 per book — 300 books for $5.
+I'm exploring:
+- Full acquisition
+- Pre-seed investment ($30-50k)
 
-Live demo: https://www.chitai-ai.online
-Tech: React + Supabase + DeepSeek
+The product is live with real users. Tech: React + Supabase + DeepSeek + Vercel.
 
-Interested in connecting?
+Demo: https://www.chitai-ai.online
+Contact: Telegram @shoma757
 
 Best,
 Shamil Badalov
-Telegram: @shoma757
 
 ---
 
-## 15. Kama Flow
-**Сайт:** https://kamaflow.com
+## 11. Kama Flow (kamaflow.com)
 
-Письмо:
+**Письмо:**
+
+Subject: AI Book Summary Startup — For Sale
 
 Hi Kama Flow team,
 
-I'm a solo founder from Kazakhstan building Читай AI — an AI book summary service. Users upload any book (PDF, EPUB, TXT), AI reads the full text and generates a short or detailed summary.
+I'm the founder of Читай AI — a web service that generates AI book summaries.
 
-Looking for:
-- Pre-seed investment ($30-50k)
-- Intro to book publishers
+I'm looking to sell the project or raise a small round. The product is live, fully coded, and costs almost nothing to run ($1.5/500 books).
 
-Product: https://www.chitai-ai.online
-Tech stack: React + Supabase + DeepSeek + Vercel
-Stage: launched, 0 revenue, building traction
+It's a perfect acquisition target for any reading platform, ebook store, or AI tool company.
 
-Happy to chat.
+Stack: React + Supabase + DeepSeek. Domain: chitai-ai.online
+
+Telegram: @shoma757
+
+Let's talk.
 
 Shamil Badalov
-Telegram: @shoma757
+
+---
+
+## Бонус: Telegram-каналы о стартапах (написать админам)
+
+1. **Стартапы СНГ** — https://t.me/startup_channel
+2. **VC.ru** — редакция
+3. **Книжные блогеры** — предожить комиссию за нахождение покупателя
