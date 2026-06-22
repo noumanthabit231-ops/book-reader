@@ -6,6 +6,7 @@ import Library from './components/Library'
 import UploadBook from './components/UploadBook'
 import BookReader from './components/BookReader'
 import BookSummary from './components/BookSummary'
+import ResetPassword from './components/ResetPassword'
 
 function App() {
   const [session, setSession] = useState<boolean | null>(null)
@@ -36,6 +37,7 @@ function App() {
         <Route path="/upload" element={session ? <UploadBook /> : <Navigate to="/auth" />} />
         <Route path="/reader/:id" element={session ? <BookReader /> : <Navigate to="/auth" />} />
         <Route path="/summary/:id" element={session ? <BookSummary /> : <Navigate to="/auth" />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   )
