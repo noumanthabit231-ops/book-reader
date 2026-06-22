@@ -35,13 +35,12 @@ export default function Auth() {
     }
 
     if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) {
-        if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('already exists')) {
-          showMsg('Такой аккаунт уже существует. Войдите в систему.')
-        } else {
-          showMsg(error.message)
-        }
+        showMsg(error.message)
+      } else if (data?.user?.identities && data.user.identities.length === 0) {
+        // Пользователь уже существует — Supabase не создал новую запись
+        showMsg('Такой аккаунт уже существует. Войдите в систему.')
       } else {
         showMsg('Письмо отправлено на ваш email. Подтвердите регистрацию.', 'success')
       }
